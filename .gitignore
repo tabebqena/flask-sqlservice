@@ -1,0 +1,5 @@
+run_code.sh
+flask-sqlservice.code-workspace
+.venv/*
+**/*.pyc
+.vscode/**
