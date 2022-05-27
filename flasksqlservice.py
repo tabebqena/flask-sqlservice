@@ -33,7 +33,7 @@ class FlaskSQLService(object):
         :param database_uri: The database uri, defaults to None
         :type database_uri: str, optional
         :param model_class: The declarative class that all models inherit from if, 
-        specifiying this parameter here or from `app.configs` is very important. If
+        specifiying this parameter here or from `app.config` is very important. If
         you passed `None` This means that all your models are inheriting from 
         `sqlservice.ModelBase`
         defaults to None
@@ -67,10 +67,10 @@ class FlaskSQLService(object):
         :param app: The flask app instance
         :type app: Flask
         :param database_uri: The database uri, defaults to None
-        which means that `app.configs[`SQL_DATABASE_URI`]` will be used.
+        which means that `app.config[`SQL_DATABASE_URI`]` will be used.
         if this value is also `None`, ValueError will be raised.
         :type database_uri: str, optional
-        :raises ValueError: raised if `uri` parameter & `app.configs[`SQL_DATABASE_URI`]` are None
+        :raises ValueError: raised if `uri` parameter & `app.config[`SQL_DATABASE_URI`]` are None
         :return: None
         :rtype: None
         """
