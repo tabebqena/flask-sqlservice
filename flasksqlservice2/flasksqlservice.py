@@ -1,5 +1,5 @@
-from typing import Union, Optional, TYPE_CHECKING, Any
-from flask import current_app, g
+from typing import Optional, TYPE_CHECKING
+from flask import g
 
 from sqlservice import Database, Session, ModelBase
 if TYPE_CHECKING:
@@ -114,7 +114,7 @@ class FlaskSQLService(object):
         # don't leave any sessions open after the request ends.
         @app.after_request
         def shutdown_session(response_or_exc):
-            g.dbsession.close()
+            g.dbsession.close()  # type: ignore
             return response_or_exc
 
     def _add_commands(self, app: "Flask", group_name: str):
