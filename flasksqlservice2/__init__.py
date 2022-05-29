@@ -1,1 +1,1 @@
-from .flasksqlservice import FlaskSQLService # noqa 
+from .flasksqlservice import FlaskSQLService  # noqa
