@@ -3,3 +3,12 @@ flask-sqlservice.code-workspace
 .venv/*
 **/*.pyc
 .vscode/**
+parts/
+sdist/
+dist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
