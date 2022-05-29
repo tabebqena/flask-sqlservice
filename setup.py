@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='flask-sqlservice2',
     # should match the package folder
-    packages=['flasksqlservice'],
+    packages=['flasksqlservice2'],
     version='1.0',
     author='Ahmad Yahia',
     description='Flask extension for integration with sqlservice package > 2.0',
