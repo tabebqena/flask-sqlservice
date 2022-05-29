@@ -1,12 +1,12 @@
 from setuptools import setup
 
 setup(
-    name='flask-sqlservice',
+    name='flask-sqlservice2',
     # should match the package folder
     packages=['flasksqlservice'],
     version='1.0',
     author='Ahmad Yahia',
-    description='Flask extension for integration with sqlservice package',
+    description='Flask extension for integration with sqlservice package > 2.0',
     keywords='flask, sql, extensions, sqlservice',
     python_requires='>=3.7, <4',
     install_requires=['sqlservice', 'flask'],
