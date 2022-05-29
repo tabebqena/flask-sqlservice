@@ -1,7 +1,7 @@
 from typing import Union, Optional, TYPE_CHECKING, Any
 from flask import current_app, g
 
-from sqlservice import Database, Session
+from sqlservice import Database, Session, ModelBase
 if TYPE_CHECKING:
     from flask import Flask
 from werkzeug.utils import import_string
@@ -29,8 +29,6 @@ class FlaskSQLService(object):
 
         :param app: The flask app instance, defaults to None
         :type app: Flask, optional
-        :param database_uri: The database uri, defaults to None
-        :type database_uri: str, optional
         """
         if app:
             self.init_app(app)
@@ -55,18 +53,26 @@ class FlaskSQLService(object):
         self.db = database_class(**options)
         self._add_session_handlers(app, options.get(
             "autoflush", None), options.get("expire_on_commit", None),)
-        self._add_commands(app, options.get("SQL_CLI_GROUP"))
+        self._add_commands(app, options.get("SQL_CLI_GROUP", "sql"))
+        app.extensions[app.config.get("SQL_EXTENSION_KEY", "sql-db")] = self
 
     def extract_options(self, app: "Flask"):
         options = {}
         uri = app.config.get("SQL_DATABASE_URI")
         if not uri:
             raise ValueError("Database uri can't be `None`")
-        options["model_class"] = app.config.get(
+        options["uri"] = uri
+
+        model_class = app.config.get(
             "SQL_MODEL_CLASS"
         )
+        if not model_class:
+            from .model import Model
+            model_class = Model
+
+        options["model_class"] = model_class
         options["session_class"] = app.config.get(
-            "SQL_SESSION_CLASS"
+            "SQL_SESSION_CLASS", Session
         )
         options["session_options"] = app.config.get("SQL_SESSION_OPTIONS", {})
         options["engine_options"] = app.config.get("SQL_ENGINE_OPTIONS")
@@ -92,7 +98,7 @@ class FlaskSQLService(object):
         return options
 
     def collect_all_models(self, app):
-        models = app.config.get("SQL_DATABASE_MODELS")
+        models = app.config.get("SQL_DATABASE_MODELS", [])
         for mod in models:
             if isinstance(mod, str):
                 import_string(mod)
@@ -111,8 +117,7 @@ class FlaskSQLService(object):
             g.dbsession.close()
             return response_or_exc
 
-    def _add_commands(self, app: "Flask", group_name: str = "sql"):
-        print("add create all command")
+    def _add_commands(self, app: "Flask", group_name: str):
         group = AppGroup(group_name)
 
         @group.command()
