@@ -50,11 +50,12 @@ class FlaskSQLService(object):
         options = self.extract_options(app)
         self.collect_all_models(app)
         database_class = app.config.get("DATABASE_CLASS", None) or Database
-        self.db = database_class(**options)
+        self.db: "Database" = database_class(**options)
+
         self._add_session_handlers(app, options.get(
             "autoflush", None), options.get("expire_on_commit", None),)
         self._add_commands(app, options.get("SQL_CLI_GROUP", "sql"))
-        app.extensions[app.config.get("SQL_EXTENSION_KEY", "sql-db")] = self
+        app.extensions[app.config.get("SQL_EXTENSION_KEY", "sql-db")] = self.db
 
     def extract_options(self, app: "Flask"):
         options = {}
@@ -103,7 +104,7 @@ class FlaskSQLService(object):
             if isinstance(mod, str):
                 import_string(mod)
 
-    def _add_session_handlers(self, app, autoflush=None, expire_on_commit=None):
+    def _add_session_handlers(self, app: "Flask", autoflush=None, expire_on_commit=None):
         @app.before_request
         def create_dbsession():
             g.dbsession = self.db.session(
@@ -117,7 +118,7 @@ class FlaskSQLService(object):
             g.dbsession.close()  # type: ignore
             return response_or_exc
 
-    def _add_commands(self, app: "Flask", group_name: str):
+    def _add_commands(self, app: "Flask",  group_name: str):
         group = AppGroup(group_name)
 
         @group.command()
