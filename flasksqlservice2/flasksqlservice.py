@@ -48,7 +48,6 @@ class FlaskSQLService(object):
         :rtype: None
         """
         options = self.extract_options(app)
-        self.collect_all_models(app)
         database_class = app.config.get("DATABASE_CLASS", None) or Database
         self.db: "Database" = database_class(**options)
 
@@ -98,12 +97,6 @@ class FlaskSQLService(object):
 
         return options
 
-    def collect_all_models(self, app):
-        models = app.config.get("SQL_DATABASE_MODELS", [])
-        for mod in models:
-            if isinstance(mod, str):
-                import_string(mod)
-
     def _add_session_handlers(self, app: "Flask", autoflush=None, expire_on_commit=None):
         @app.before_request
         def create_dbsession():
@@ -124,7 +117,6 @@ class FlaskSQLService(object):
         @group.command()
         @with_appcontext
         def create_all():
-            self.collect_all_models(app)
             self.db.create_all()
 
         @group.command()
