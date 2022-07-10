@@ -67,7 +67,7 @@ class FlaskSQLService(object):
             "SQL_MODEL_CLASS"
         )
         if not model_class:
-            from .model import Model
+            from flasksqlservice2.model import Model
             model_class = Model
 
         options["model_class"] = model_class
